@@ -7,9 +7,13 @@
       </div>
       <div class="booking-form__input">
         <div class="date-range">
-          <input type="text" class="date-range__from" placeholder="Date from">
+          <input type="text" @click="openCalendar()" class="date-range__from" :class="{ active: calendarFlag }" placeholder="Date from">
           <IconArrowRight />
-          <input type="text" class="date-range__to" placeholder="Date to">
+          <input type="text" @click="openCalendar()" class="date-range__to" placeholder="Date to">
+
+          <div class="calendar-dropdown" v-if="calendarFlag">
+            <Calendar />
+          </div>
         </div>
       </div>
   </div>
@@ -18,14 +22,26 @@
 <script>
 import StarRating from './StarRating.vue'
 import IconArrowRight from './IconArrowRight.vue'
+import Calendar from './Calendar.vue'
 
 export default {
   name: 'BookingForm',
   props: {},
   components: {
     StarRating,
-    IconArrowRight
-  }
+    IconArrowRight,
+    Calendar
+  },
+  data() {
+    return {
+      calendarFlag: false
+    }
+  },
+  methods: {
+    openCalendar() {
+      this.calendarFlag = true;
+    }
+  },
 }
 </script>
 
@@ -97,6 +113,7 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
       input {
         cursor: pointer;
         width: 100%;
@@ -117,7 +134,7 @@ export default {
             color: #4E9845;
           }
         }
-        &:focus-visible {
+        &.active, &:focus-visible {
           background: #EDF5EC;
           outline-color: #EDF5EC;
           caret-color: transparent;
@@ -125,6 +142,19 @@ export default {
             color: #4E9845;
           }
         }
+      }
+      .calendar-dropdown {
+        display: block;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 3.5rem;
+        width: auto;
+        height: 20.75rem;
+        background: #FFFFFF;
+        box-shadow: 0px 10px 40px rgba(51, 47, 47, 0.15);
+        border-radius: 1.25rem;
+        padding: 1.5rem;
       }
     }
   }
