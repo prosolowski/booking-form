@@ -286,8 +286,8 @@ export default {
       &--between:not(&--selected) {
         background-color: #EDF5EC;
         color: #4E9845;
-        span {
-          border: none;
+        &:not(.day--today) span {
+          border: transparent;
         }
       }
       &--not-current span {

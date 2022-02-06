@@ -2,7 +2,7 @@
   <div class="booking-form">
     <div class="booking-form__price">298 zł</div>
     <div class="booking-form__rate">
-      <StarRating :rate="4.5" :reviews="123" />
+      <StarRating :rate="3.5" :reviews="123" />
     </div>
     <div class="booking-form__btn">
       <button type="button" class="btn btn-green">Reserve</button>
