@@ -24,7 +24,10 @@
         :class="{
           'day--not-current': !day.isCurrentMonth,
           'day--today': day.date === today,
+          'day--selected': (day.date === dateFrom || day.date === dateTo),
+          'day--between': datesBetween(day.date),
         }"
+        @click="selectDate(day.date)"
       >
         <span>{{ getDay(day.date) }}</span>
       </li>
@@ -46,6 +49,8 @@ export default {
   data() {
     return {
       selectedDate: dayjs(),
+      dateFrom: "",
+      dateTo: "",
     };
   },
   components: {
@@ -150,6 +155,25 @@ export default {
     getNextMonth() {
       this.selectedDate = dayjs(this.selectedDate).add(1, "month");
     },
+    selectDate(date) {
+      let formattedDate =
+        this.getDay(date) +
+        " " +
+        dayjs(date).format("MMM") +
+        " " +
+        dayjs(date).format("YYYY");
+
+      if (!this.dateFrom) {
+        this.dateFrom = date;
+      } else {
+        this.dateTo = date;
+      }
+
+      this.$emit("selectedDate", formattedDate);
+    },
+    datesBetween(date) {
+      return (!dayjs(date).isBefore(dayjs(this.dateFrom)) && dayjs(date).isBefore(dayjs(this.dateTo)));
+    }
   },
 };
 </script>
@@ -192,22 +216,45 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
-      padding-top: 0.5rem;
-      padding-bottom: 0.5rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
       font-weight: 600;
       font-size: 0.75rem;
       line-height: 1rem;
     }
     .day {
-      &--today span {
+      cursor: pointer;
+      span {
         display: flex;
         justify-content: center;
         align-items: center;
         width: 100%;
         height: 100%;
-        border: 2px solid #a6cba2;
+        border: 2px solid #ffffff;
         border-radius: 3rem;
         box-sizing: border-box;
+      }
+      &--today span {
+        border-color: #a6cba2;
+        color: #4E9845;
+      }
+      &:hover span {
+        background-color: #edf5ec;
+      }
+      &--selected span {
+        background-color: #4e9845;
+        border: none;
+        color: #ffffff;
+      }
+      &--selected:hover span {
+        background-color: #46873e;
+      }
+      &--between:not(&--selected) {
+        background-color: #EDF5EC;
+        color: #4E9845;
+        span {
+          border: none;
+        }
       }
       &--not-current span {
         color: #d8d8d8;
