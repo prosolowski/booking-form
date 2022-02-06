@@ -9,25 +9,47 @@
     </div>
     <div class="booking-form__input">
       <div class="date-range" v-click-outside="hideCalendar">
-        <input
-          type="text"
+        <div
           @click="toggleCalendar()"
           class="date-range__from"
           :class="{ active: calendarFlag, selected: selectedDate.dateFrom }"
-          ref="dateFrom"
-          placeholder="Date from"
-          :value="selectedDate.dateFrom"
-        />
-        <IconArrowRight />
-        <input
-          type="text"
+        >
+          <div>
+            {{ selectedDate.dateFrom ? selectedDate.dateFrom : 'Date from' }}
+            <span
+              v-if="selectedDate.dateFrom"
+              @click="resetDate(selectedDate.dateFrom)"
+              title="Reset date"
+              ><IconClose /></span
+            >
+          </div>
+          <input
+            type="hidden"
+            placeholder="Date from"
+            :value="selectedDate.dateFrom"
+          />
+        </div>
+        <IconArrowRight class="divider" />
+        <div
           @click="toggleCalendar()"
           class="date-range__to"
-          :class="{ selected: selectedDate.dateTo }"
-          ref="dateTo"
-          placeholder="Date to"
-          :value="selectedDate.dateTo"
-        />
+          :class="{ active: calendarFlag && selectedDate.dateFrom, selected: selectedDate.dateTo }"
+        >
+          <div>
+            {{ selectedDate.dateTo ? selectedDate.dateTo : 'Date to' }}
+            <span
+              v-if="selectedDate.dateTo"
+              @click="resetDate(selectedDate.dateTo)"
+              title="Reset date"
+              ><IconClose /></span
+            >
+          </div>
+          <input
+            type="hidden"
+            placeholder="Date to"
+            :value="selectedDate.dateTo"
+          />
+        </div>
 
         <div class="calendar-dropdown" v-if="calendarFlag">
           <Calendar @selectedDate="selectDate" :dateRange="selectedDate" />
@@ -41,6 +63,7 @@
 import StarRating from "./StarRating.vue";
 import IconArrowRight from "./IconArrowRight.vue";
 import Calendar from "./Calendar.vue";
+import IconClose from "./IconClose.vue";
 
 export default {
   name: "BookingForm",
@@ -48,14 +71,15 @@ export default {
     StarRating,
     IconArrowRight,
     Calendar,
+    IconClose,
   },
   data() {
     return {
       calendarFlag: false,
       selectedDate: {
-        dateFrom: '',
-        dateTo: ''
-      }
+        dateFrom: "",
+        dateTo: "",
+      },
     };
   },
   methods: {
@@ -66,11 +90,18 @@ export default {
       this.calendarFlag = false;
     },
     selectDate(dateSelected) {
-      if(!this.selectedDate.dateFrom) {
+      if (!this.selectedDate.dateFrom) {
         this.selectedDate.dateFrom = dateSelected;
-        this.$refs['dateTo'].focus();
       } else {
         this.selectedDate.dateTo = dateSelected;
+      }
+    },
+    resetDate(date) {
+      if(this.selectedDate.dateTo === date) {
+        this.selectedDate.dateTo = "";
+      } else {
+        this.selectedDate.dateFrom = "";
+        this.selectedDate.dateTo = "";
       }
     },
   },
@@ -146,7 +177,12 @@ export default {
       align-items: center;
       justify-content: center;
       position: relative;
-      input {
+      .divider {
+        display: flex;
+        flex: 1;
+        justify-content: center;
+      }
+      &__from, &__to {
         font-family: Montserrat;
         cursor: pointer;
         width: 100%;
@@ -154,26 +190,19 @@ export default {
         border-radius: 3rem;
         padding: 8px;
         margin: 8px;
-        &::placeholder {
-          font-weight: 600;
-          font-size: 0.875rem;
-          line-height: 1.25rem;
-          color: #999999;
-        }
+        font-weight: 600;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        color: #999999;
         &:hover {
           background: #edf5ec;
-          &::placeholder {
-            color: #4e9845;
-          }
+          color: #4e9845;
         }
-        &.active,
-        &:focus-visible {
+        &.active {
           background: #edf5ec;
           outline-color: #edf5ec;
           caret-color: transparent;
-          &::placeholder {
-            color: #4e9845;
-          }
+          color: #4e9845;
         }
         &.selected {
           background: transparent;
@@ -183,6 +212,13 @@ export default {
           line-height: 1.25rem;
           color: #333333;
         }
+        & > div > span {
+          padding-left: 0.5rem;
+        }
+      }
+      &__to.active.selected {
+        background: #edf5ec;
+        color: #4e9845;
       }
       .calendar-dropdown {
         display: block;
