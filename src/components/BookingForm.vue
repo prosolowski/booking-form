@@ -150,7 +150,7 @@ export default {
         right: 0;
         top: 3.5rem;
         width: auto;
-        height: 20.75rem;
+        height: auto;
         background: #FFFFFF;
         box-shadow: 0px 10px 40px rgba(51, 47, 47, 0.15);
         border-radius: 1.25rem;
