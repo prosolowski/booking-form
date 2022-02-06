@@ -24,7 +24,7 @@
         :class="{
           'day--not-current': !day.isCurrentMonth,
           'day--today': day.date === today,
-          'day--selected': (day.date === dateFrom || day.date === dateTo),
+          'day--selected': datesSelected(day.date),
           'day--between': datesBetween(day.date),
         }"
         @click="selectDate(day.date)"
@@ -49,13 +49,24 @@ export default {
   data() {
     return {
       selectedDate: dayjs(),
-      dateFrom: "",
-      dateTo: "",
+      dateFrom: '',
+      dateTo: '',
     };
+  },
+  props: {
+    dateRange: Object,
   },
   components: {
     IconArrowNavLeft,
     IconArrowNavRight,
+  },
+  created() {
+    if(this.dateRange.dateFrom) {
+      this.dateFrom = dayjs(this.dateRange.dateFrom).format("YYYY-MM-DD");
+    }
+    if(this.dateRange.dateTo) {
+      this.dateTo = dayjs(this.dateRange.dateTo).format("YYYY-MM-DD");
+    }
   },
   computed: {
     days() {
@@ -156,6 +167,7 @@ export default {
       this.selectedDate = dayjs(this.selectedDate).add(1, "month");
     },
     selectDate(date) {
+      console.log(date);
       let formattedDate =
         this.getDay(date) +
         " " +
@@ -174,7 +186,14 @@ export default {
       }
     },
     datesBetween(date) {
-      return (!dayjs(date).isBefore(dayjs(this.dateFrom)) && dayjs(date).isBefore(dayjs(this.dateTo)));
+      if(this.dateFrom && this.dateTo) {
+        return (!dayjs(date).isBefore(dayjs(this.dateFrom)) && dayjs(date).isBefore(dayjs(this.dateTo)));
+      } else {
+        return false;
+      }
+    },
+    datesSelected(date) {
+      return (date === this.dateFrom || date === this.dateTo);
     }
   },
 };
@@ -243,15 +262,13 @@ export default {
         background-color: #edf5ec;
       }
       &--selected {
+        background-color: #EDF5EC;
+        border-top-left-radius: 50%;
+        border-bottom-left-radius: 50%;
         span {
           background-color: #4e9845;
           border: none;
           color: #ffffff;
-        }
-        &.day--between {
-          background-color: #EDF5EC;
-          border-top-left-radius: 50%;
-          border-bottom-left-radius: 50%;
         }
         &:not(.day--between) {
           background-color: #EDF5EC;
@@ -261,6 +278,10 @@ export default {
       }
       &--selected:hover span {
         background-color: #46873e;
+      }
+      &--between + .day--selected {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
       }
       &--between:not(&--selected) {
         background-color: #EDF5EC;

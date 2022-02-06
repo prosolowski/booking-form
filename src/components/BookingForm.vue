@@ -8,10 +8,10 @@
       <button type="button" class="btn btn-green">Reserve</button>
     </div>
     <div class="booking-form__input">
-      <div class="date-range">
+      <div class="date-range" v-click-outside="hideCalendar">
         <input
           type="text"
-          @click="openCalendar()"
+          @click="toggleCalendar()"
           class="date-range__from"
           :class="{ active: calendarFlag, selected: selectedDate.dateFrom }"
           ref="dateFrom"
@@ -21,7 +21,7 @@
         <IconArrowRight />
         <input
           type="text"
-          @click="openCalendar()"
+          @click="toggleCalendar()"
           class="date-range__to"
           :class="{ selected: selectedDate.dateTo }"
           ref="dateTo"
@@ -30,7 +30,7 @@
         />
 
         <div class="calendar-dropdown" v-if="calendarFlag">
-          <Calendar @selectedDate="selectDate" />
+          <Calendar @selectedDate="selectDate" :dateRange="selectedDate" />
         </div>
       </div>
     </div>
@@ -44,7 +44,6 @@ import Calendar from "./Calendar.vue";
 
 export default {
   name: "BookingForm",
-  props: {},
   components: {
     StarRating,
     IconArrowRight,
@@ -60,8 +59,11 @@ export default {
     };
   },
   methods: {
-    openCalendar() {
-      this.calendarFlag = true;
+    toggleCalendar() {
+      this.calendarFlag = !this.calendarFlag;
+    },
+    hideCalendar() {
+      this.calendarFlag = false;
     },
     selectDate(dateSelected) {
       if(!this.selectedDate.dateFrom) {
@@ -70,7 +72,7 @@ export default {
       } else {
         this.selectedDate.dateTo = dateSelected;
       }
-    }
+    },
   },
 };
 </script>
