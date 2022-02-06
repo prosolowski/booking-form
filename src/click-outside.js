@@ -1,5 +1,5 @@
 export default {
-  beforeMount: function (el, binding, vnode) {
+  beforeMount: function (el, binding) {
     binding.event = function (event) {
       if (!(el === event.target || el.contains(event.target))) {
         if (binding.value instanceof Function) {
@@ -9,7 +9,7 @@ export default {
     };
     document.body.addEventListener("click", binding.event);
   },
-  unmounted: function (el, binding, vnode) {
+  unmounted: function (el, binding) {
     document.body.removeEventListener("click", binding.event);
   },
 };
