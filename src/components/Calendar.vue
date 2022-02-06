@@ -165,11 +165,13 @@ export default {
 
       if (!this.dateFrom) {
         this.dateFrom = date;
+        this.$emit("selectedDate", formattedDate);
       } else {
-        this.dateTo = date;
+        if(!dayjs(date).isBefore(dayjs(this.dateFrom))) {
+          this.dateTo = date;
+          this.$emit("selectedDate", formattedDate);
+        }
       }
-
-      this.$emit("selectedDate", formattedDate);
     },
     datesBetween(date) {
       return (!dayjs(date).isBefore(dayjs(this.dateFrom)) && dayjs(date).isBefore(dayjs(this.dateTo)));
@@ -211,8 +213,7 @@ export default {
     padding-left: 0;
     margin: 0;
     & > * {
-      width: 2rem;
-      height: 2rem;
+      height: 2.5rem;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -241,10 +242,22 @@ export default {
       &:hover span {
         background-color: #edf5ec;
       }
-      &--selected span {
-        background-color: #4e9845;
-        border: none;
-        color: #ffffff;
+      &--selected {
+        span {
+          background-color: #4e9845;
+          border: none;
+          color: #ffffff;
+        }
+        &.day--between {
+          background-color: #EDF5EC;
+          border-top-left-radius: 50%;
+          border-bottom-left-radius: 50%;
+        }
+        &:not(.day--between) {
+          background-color: #EDF5EC;
+          border-top-right-radius: 50%;
+          border-bottom-right-radius: 50%;
+        }
       }
       &--selected:hover span {
         background-color: #46873e;
